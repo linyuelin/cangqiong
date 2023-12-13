@@ -83,4 +83,31 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		}
 	}
 
+	/**
+	 * カートに入れてた商品を見せる
+	 */
+	@Override
+	public List<ShoppingCart> showShoppingCart() {
+		ShoppingCart shoppingCart = new ShoppingCart();
+		shoppingCart.setUserId(BaseContext.getCurrentId());
+		List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+		return list;
+	}
+
+	/**
+	 * カートを空にする
+	 */
+	public void cleanShoppingCart() {
+		
+		shoppingCartMapper.cleanShoppingCart(BaseContext.getCurrentId());
+		
+	}
+	
 }
+
+
+
+
+
+
+
