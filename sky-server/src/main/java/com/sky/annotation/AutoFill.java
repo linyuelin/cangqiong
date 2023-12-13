@@ -1,0 +1,19 @@
+package com.sky.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import com.sky.enumeration.OperationType;
+
+/**
+ * カスタムアノテーション、自動的に公共フィールドを補充する
+ */
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AutoFill {
+	//データーベース操作のメソッド
+    OperationType value();
+}
