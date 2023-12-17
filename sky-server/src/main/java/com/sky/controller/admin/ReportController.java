@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sky.result.Result;
 import com.sky.service.ReportService;
 import com.sky.vo.TurnoverReportVO;
+import com.sky.vo.UserReportVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,4 +38,22 @@ public class ReportController {
 		TurnoverReportVO turnoverReportVO =reportService.getTurnoverStatistics(begin,end);
 		return Result.success(turnoverReportVO);
 	}
+	
+	@GetMapping("/userStatistics")
+	@ApiOperation("ユーザー統計")
+	public Result<UserReportVO> userStatistics(
+			@DateTimeFormat(pattern = "yyyy-MM-dd" )LocalDate begin,
+			@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate end
+			){
+		log.info("ユーザー統計のコントローラーで取得したデータ {} {}",end,begin);
+		UserReportVO userReportVO =reportService.getUserStatistics(begin,end);
+		return Result.success(userReportVO);
+		
+	}
 }
+
+
+
+
+
+
