@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 
 @Mapper
@@ -47,7 +48,22 @@ public interface OrderMapper {
 	Integer orderByMap(Map map);
 
 	
+	/**
+	 * 業績統計をセレクトする
+	 * @param begin
+	 * @param end
+	 * @return
+	 */
 	Double sumByMap(Map map);
+	
+
+	 /** 
+	  * トップテン
+	  * @param beginTime
+	  * @param endTime
+	  * @return
+	  */
+	List<GoodsSalesDTO> getTop10(LocalDateTime beginTime, LocalDateTime endTime);
 
 
 }

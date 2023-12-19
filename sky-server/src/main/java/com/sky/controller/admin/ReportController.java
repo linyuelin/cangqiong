@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sky.result.Result;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 
@@ -63,6 +64,19 @@ public class ReportController {
 		log.info("オーダー統計のコントローラーで取得したデータ {} {}",end,begin);
 		OrderReportVO orderReportVO =reportService.getOrderStatistics(begin,end);
 		return Result.success(orderReportVO);
+		
+	}
+	
+	
+	@GetMapping("/top10")
+	@ApiOperation("トップテン統計")
+	public Result<SalesTop10ReportVO> top10(
+			@DateTimeFormat(pattern = "yyyy-MM-dd" )LocalDate begin,
+			@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate end
+			){
+		log.info("トップテンのコントローラーで取得したデータ {} {}",end,begin);
+		SalesTop10ReportVO salesTop10ReportVO =reportService.getSalesTop10(begin,end);
+		return Result.success(salesTop10ReportVO);
 		
 	}
 	
