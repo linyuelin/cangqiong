@@ -9,7 +9,7 @@
 	 
 	</insert>
 	
-	<select id="getByMap" resultType="java.lang.Integer">
+	<select id="countByMap" resultType="java.lang.Integer">
 	   select count(id) from user 
 	   <where>
 	     <if test="begin != null">

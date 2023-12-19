@@ -60,7 +60,7 @@
             </where>
     </select>
     
-    <select id="orderByMap" resultType="java.lang.Integer">
+    <select id="countByMap" resultType="java.lang.Integer">
         select count(id) from orders
         <where>
 		        <if test="begin != null">

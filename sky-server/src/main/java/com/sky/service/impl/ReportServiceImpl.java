@@ -103,10 +103,10 @@ public class ReportServiceImpl implements ReportService {
 			
 			Map map =new HashMap();
 			map.put("end", endTime);
-			Integer countUser = userMapper.getByMap(map);
+			Integer countUser = userMapper.countByMap(map);
 			
 			map.put("begin", beginTime);
-			Integer newUser = userMapper.getByMap(map);
+			Integer newUser = userMapper.countByMap(map);
 			
 			totalUserList.add(countUser);
 			
@@ -149,11 +149,11 @@ public class ReportServiceImpl implements ReportService {
 			map.put("begin", beginTime);
 			map.put("end", endTime);
 			
-		   Integer orderCount =orderMapper.orderByMap(map);
+		   Integer orderCount =orderMapper.countByMap(map);
 		   
 		   map.put("status", Orders.COMPLETED);
 		   
-		   Integer validOrder =orderMapper.orderByMap(map);
+		   Integer validOrder =orderMapper.countByMap(map);
 		   
 		   orderCountList .add(orderCount);
 		   validOrderList.add(validOrder);
