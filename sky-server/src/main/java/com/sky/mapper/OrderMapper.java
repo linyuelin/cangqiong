@@ -44,7 +44,16 @@ public interface OrderMapper {
      * @param map
      * @return
      */
+	Integer orderByMap(Map map);
+
+	
 	Double sumByMap(Map map);
 
 
 }
+
+
+
+
+
+
