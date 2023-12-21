@@ -3,6 +3,8 @@ package com.sky.controller.admin;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,6 +79,17 @@ public class ReportController {
 		log.info("トップテンのコントローラーで取得したデータ {} {}",end,begin);
 		SalesTop10ReportVO salesTop10ReportVO =reportService.getSalesTop10(begin,end);
 		return Result.success(salesTop10ReportVO);
+		
+	}
+	
+	/**
+	 * 営業状況表をエクスポート
+	 * @param response
+	 */
+	@GetMapping("export")
+	@ApiOperation("営業状況表をエクスポート")
+	public void export(HttpServletResponse response) {
+		reportService.exportBusinessData(response);
 		
 	}
 	

@@ -1,6 +1,8 @@
 package com.sky.service.impl;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,7 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +28,8 @@ import com.sky.entity.User;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.BusinessDataVO;
 import com.sky.vo.OrderReportVO;
 import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
@@ -37,6 +47,10 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private UserMapper userMapper;
+	
+	
+	@Autowired
+	private WorkspaceService workspaceService ;
 	
 	
 	/**
@@ -198,6 +212,73 @@ public class ReportServiceImpl implements ReportService {
 		
 		
 		return SalesTop10ReportVO.builder().nameList(nameList).numberList(numberList).build();
+	}
+
+	/**
+	 * 営業状況表をエクスポート
+	 * @param response
+	 */
+	public void exportBusinessData(HttpServletResponse response) {
+		
+		//データーベースにアクセスして、ここ三十日の業績を調べる
+		LocalDate dateBegin = LocalDate.now().minusDays(30);
+		LocalDate dateEnd = LocalDate.now().minusDays(1);
+		
+		
+	    BusinessDataVO businessDataVO = workspaceService.getBusinessData(LocalDateTime.of(dateBegin, LocalTime.MIN),LocalDateTime.of(dateEnd, LocalTime.MAX));
+	    //POIでExcelファイルに書き込む
+	    InputStream in = this.getClass().getResourceAsStream("/template/yunyingbaobiao.xlsx");
+	    
+	    try {
+	    	//サンプルを基づいて、Excelファイルを作る
+	    	XSSFWorkbook excel = new XSSFWorkbook(in);
+	    	
+	    	//sheetを取得する
+	    	XSSFSheet sheet = excel.getSheet("sheet1");
+	    	
+	    	//データを書き込む　時間
+	    	sheet.getRow(1).getCell(1).setCellValue("時間:" +dateBegin +"~"+dateEnd);
+	    	
+	    	//第四行を取得する
+	    	XSSFRow row = sheet.getRow(3);
+	    	row.getCell(2).setCellValue(businessDataVO.getTurnover());
+	    	row.getCell(4).setCellValue(businessDataVO.getOrderCompletionRate());
+	    	row.getCell(6).setCellValue(businessDataVO.getNewUsers());
+	    	
+	    	//第五行を取得して書き込む
+	    	row = sheet.getRow(4);
+	    	row.getCell(2).setCellValue(businessDataVO.getValidOrderCount());
+	    	row.getCell(4).setCellValue(businessDataVO.getUnitPrice());
+	        
+	    	//明細データを書き込む
+	    	for (int i = 0; i < 30; i++) {
+				LocalDate date = dateBegin.plusDays(i);
+				BusinessDataVO businessData = workspaceService.getBusinessData(LocalDateTime.of(date,LocalTime.MIN), LocalDateTime.of(date,LocalTime.MAX));
+			   
+				//書き込む　
+				row = sheet.getRow(7 + i);
+		    	row.getCell(1).setCellValue(date.toString());
+		    	row.getCell(2).setCellValue(businessData.getTurnover());
+		    	row.getCell(3).setCellValue(businessData.getValidOrderCount());
+		    	row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+		    	row.getCell(5).setCellValue(businessData.getUnitPrice());
+		    	row.getCell(6).setCellValue(businessData.getNewUsers());
+		    	
+	    	}
+	    	
+	    	
+	    	
+	    	//出力ストリームでファイルを
+	    	ServletOutputStream out = response.getOutputStream();
+	    	excel.write(out);
+	    	
+	    	
+	    	//リソースを閉じる
+	    	out.close();
+	    	excel.close();
+	    }catch(IOException e){
+	    	e.printStackTrace();
+	    }
 	}
 
 	
